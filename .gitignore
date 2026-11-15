@@ -20,9 +20,8 @@ logs/api_requests.csv
 reports/*.html
 reports/*.json
 
-# MLflow
+# MLflow (if present, ignore)
 mlruns/
-mlflow.db
 
 # IDE
 .vscode/

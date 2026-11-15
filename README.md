@@ -1,4 +1,4 @@
-# Arithmetic Operations API — FastAPI + Jenkins + Pytest + Evidently + MLflow
+# Arithmetic Operations API — FastAPI + Jenkins + Pytest + Evidently
 
 ## 1. Project problem statement
 
@@ -9,7 +9,7 @@ Create a Python program that accepts two numbers and performs:
 - Multiplication: `num1 * num2`
 - Division: `num1 / num2` (division by zero is rejected)
 
-Integrate the program with FastAPI, Jenkins, pytest, Evidently, and MLflow. Git is optional.
+Integrate the program with FastAPI, Jenkins, pytest, and Evidently. Git is optional.
 
 ## 2. Tools used
 
@@ -20,7 +20,6 @@ Integrate the program with FastAPI, Jenkins, pytest, Evidently, and MLflow. Git 
 | Jenkins | Runs the automated build/test/monitoring pipeline |
 | pytest | Tests API responses, arithmetic results and error handling |
 | Evidently | Compares the distribution of incoming numeric inputs with reference inputs |
-| MLflow | Tracks experiments, logs metrics, and manages monitoring artifacts |
 | Git (optional) | Tracks source-code changes and can provide Jenkins checkout |
 
 ## 3. Folder structure
@@ -40,15 +39,10 @@ arithmetic_fastapi_mlops/
 ├── logs/
 │   └── api_requests.csv       # created automatically after API requests
 ├── reports/                   # HTML and JSON reports are written here
-├── mlruns/                    # MLflow tracking data
-│   └── mlflow.db
-├── mlflow_tracking.py
 ├── Jenkinsfile
 ├── requirements.txt
 ├── run_api.bat
 ├── run_tests.bat
-├── run_mlflow_ui.bat
-├── run_mlflow_tracking.bat
 ├── run_all_monitoring.bat
 └── generate_evidently_report.bat
 ```
@@ -150,59 +144,7 @@ Open the HTML file in a browser.
 
 **Important:** Evidently checks changes in the distribution of API input values; it does not verify whether addition/subtraction/multiplication/division is mathematically correct. pytest checks arithmetic correctness. These tools have different responsibilities.
 
-## 9. MLflow Experiment Tracking
-
-MLflow tracks experiments, logs metrics, and manages artifacts from your API monitoring.
-
-### Log metrics to MLflow
-
-After generating some API traffic and the Evidently report, run:
-
-```powershell
-python mlflow_tracking.py
-```
-
-This script:
-- Logs API request metrics (total requests, operation counts, averages)
-- Logs the Evidently HTML and JSON reports as artifacts
-- Creates experiments in the MLflow tracking database
-
-### View MLflow UI
-
-Start the MLflow UI to explore logged experiments:
-
-```powershell
-.\run_mlflow_ui.bat
-```
-
-Or manually:
-
-```powershell
-mlflow ui --backend-store-uri sqlite:///mlruns/mlflow.db --host 0.0.0.0 --port 5000
-```
-
-Then open http://localhost:5000 in your browser.
-
-### Run complete monitoring pipeline
-
-Execute tests, generate Evidently reports, and log to MLflow in one command:
-
-```powershell
-.\run_all_monitoring.bat
-```
-
-This automated script:
-1. Runs pytest tests
-2. Generates Evidently data drift report
-3. Logs all metrics and artifacts to MLflow
-
-**MLflow Features:**
-- **Experiments:** Organize runs by experiment name (`arithmetic_api_monitoring`)
-- **Metrics:** Track API usage patterns, operation distributions, and averages
-- **Artifacts:** Store Evidently reports and API logs for each run
-- **Comparison:** Compare metrics across multiple runs in the UI
-
-## 10. Jenkins integration
+## 9. Jenkins integration
 
 ## 10. Jenkins integration
 
@@ -235,21 +177,19 @@ venv\Scripts\python -m pip install -r requirements.txt
 venv\Scripts\python -m pytest -v
 set PYTHONPATH=%CD%
 venv\Scripts\python monitoring\generate_report.py
-venv\Scripts\python mlflow_tracking.py
 ```
 
 Run the job and inspect **Console Output**. Jenkins must have permission to write to the workspace. For a repeatable Pipeline job, SCM checkout is generally more convenient.
 
-## 11. What to explain in the practical viva
+## 10. What to explain in the practical viva
 
 - **FastAPI:** Converts Python functions into HTTP API endpoints. `/docs` provides interactive Swagger documentation.
 - **Jenkins:** Automates the sequence of installing dependencies, running tests and generating a monitoring report.
 - **pytest:** Runs automated assertions to confirm that the API returns the expected arithmetic results and handles errors.
 - **Evidently:** Compares reference inputs with current API inputs and generates a data-drift report.
-- **MLflow:** Tracks experiments, logs metrics (request counts, averages), and stores artifacts (Evidently reports, logs). Provides a UI for comparing runs.
 - **Git (optional):** Tracks code changes and can be used by Jenkins to fetch the project source.
 
-## 12. Quick command summary
+## 11. Quick command summary
 
 ```powershell
 # Install dependencies
@@ -270,25 +210,15 @@ python monitoring/generate_report.py
 # Or use the batch file
 .\generate_evidently_report.bat
 
-# Log metrics to MLflow
-python mlflow_tracking.py
-# Or use the batch file
-.\run_mlflow_tracking.bat
-
-# Start MLflow UI
-.\run_mlflow_ui.bat
-
-# Run complete monitoring pipeline (pytest + Evidently + MLflow)
+# Run complete monitoring pipeline (pytest + Evidently)
 .\run_all_monitoring.bat
 ```
 
-## 13. Batch Files Reference
+## 12. Batch Files Reference
 
 | Batch File | Purpose |
 |---|---|
 | `run_api.bat` | Start the FastAPI server |
 | `run_tests.bat` | Run pytest test suite |
 | `generate_evidently_report.bat` | Generate Evidently data drift report |
-| `run_mlflow_ui.bat` | Start MLflow UI on http://localhost:5000 |
-| `run_mlflow_tracking.bat` | Log metrics and artifacts to MLflow |
-| `run_all_monitoring.bat` | Complete pipeline: pytest → Evidently → MLflow |
+| `run_all_monitoring.bat` | Complete pipeline: pytest → Evidently |
