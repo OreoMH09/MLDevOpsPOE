@@ -26,15 +26,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh '''
-                            export PYTHONPATH=$PWD
-                            venv/bin/python -m pytest tests/ -v
-                        '''
+                        sh 'export PYTHONPATH=$PWD && venv/bin/python -m pytest tests/ -v'
                     } else {
-                        bat '''
-                            set PYTHONPATH=%CD%
-                            venv\\Scripts\\python -m pytest tests/ -v
-                        '''
+                        bat 'set PYTHONPATH=%CD% && venv\\Scripts\\python -m pytest tests/ -v'
                     }
                 }
             }
@@ -44,15 +38,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh '''
-                            export PYTHONPATH=$PWD
-                            venv/bin/python monitoring/generate_report.py
-                        '''
+                        sh 'export PYTHONPATH=$PWD && venv/bin/python monitoring/generate_report.py'
                     } else {
-                        bat '''
-                            set PYTHONPATH=%CD%
-                            venv\\Scripts\\python monitoring\\generate_report.py
-                        '''
+                        bat 'set PYTHONPATH=%CD% && venv\\Scripts\\python monitoring\\generate_report.py'
                     }
                 }
             }
