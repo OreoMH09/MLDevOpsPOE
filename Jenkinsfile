@@ -5,6 +5,11 @@ pipeline {
         timestamps()
     }
 
+    environment {
+        PYTHON_HOME = 'C:\\Users\\Sanika Naik\\AppData\\Local\\Programs\\Python\\Python311'
+        PATH = "${env.PYTHON_HOME};${env.PYTHON_HOME}\\Scripts;${env.PATH}"
+    }
+
     stages {
         stage('Install Dependencies') {
             steps {
@@ -14,9 +19,11 @@ pipeline {
                         sh 'venv/bin/python -m pip install --upgrade pip'
                         sh 'venv/bin/python -m pip install -r requirements.txt'
                     } else {
-                        bat 'python -m venv venv'
-                        bat 'venv\\Scripts\\python -m pip install --upgrade pip'
-                        bat 'venv\\Scripts\\python -m pip install -r requirements.txt'
+                        bat '''
+                            python -m venv venv
+                            venv\\Scripts\\python -m pip install --upgrade pip
+                            venv\\Scripts\\python -m pip install -r requirements.txt
+                        '''
                     }
                 }
             }
@@ -28,7 +35,10 @@ pipeline {
                     if (isUnix()) {
                         sh 'export PYTHONPATH=$PWD && venv/bin/python -m pytest tests/ -v'
                     } else {
-                        bat 'set PYTHONPATH=%CD% && venv\\Scripts\\python -m pytest tests/ -v'
+                        bat '''
+                            set PYTHONPATH=%CD%
+                            venv\\Scripts\\python -m pytest tests/ -v
+                        '''
                     }
                 }
             }
@@ -40,7 +50,10 @@ pipeline {
                     if (isUnix()) {
                         sh 'export PYTHONPATH=$PWD && venv/bin/python monitoring/generate_report.py'
                     } else {
-                        bat 'set PYTHONPATH=%CD% && venv\\Scripts\\python monitoring\\generate_report.py'
+                        bat '''
+                            set PYTHONPATH=%CD%
+                            venv\\Scripts\\python monitoring\\generate_report.py
+                        '''
                     }
                 }
             }
